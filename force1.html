@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <script src="d3.js"></script>
+    <script>
+        var nodes=[
+            {name:"NODE_A"},
+            {name:"NODE_B"},
+            {name:"NODE_C"}
+        ];
+        var edges=[
+            {source:0, target:1},
+            {source:1, target:2},
+            {source:0, target:2}
+        ];
+        var force=d3.layout.force()
+                .nodes(nodes)
+                .links(edges)
+                .size([960, 600])
+                .linkDistance(100)
+                .charge(-400)
+                .start();
+        var svg=d3.select("body")
+                .append("svg")
+                .attr("width", 960)
+                .attr("height", 600);
+        var links=svg.selectAll("line")
+                .data(edges)
+                .enter()
+                .append("line")
+                .style("stroke", "#ccc")
+                .style("stroke-width", 2);
+        var color = d3.scale.category20();
+        var elems=svg.selectAll("circle")
+                .data(nodes)
+                .enter()
+                .append("circle")
+                .attr("r", 20)
+                .style("fill", function(d, i) {
+                    return color(i);
+                })
+                .call(force.drag);
+        force.on("tick", function() {
+            links.attr("x1", function(d) {return d.source.x;})
+                    .attr("y1", function(d) {return d.source.y;})
+                    .attr("x2", function(d) {return d.target.x;})
+                    .attr("y2", function(d) {return d.target.y;});
+            elems.attr("cx", function(d) {return d.x;})
+                    .attr("cy", function(d) {return d.y;});
+        });
+    </script>
+</body>
+</html>

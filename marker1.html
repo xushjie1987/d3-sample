@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <script src="d3.js"></script>
+    <script>
+        var svg=d3.select("body")
+                .append("svg")
+                .attr("width", 960)
+                .attr("height", 600);
+        svg.append("defs")
+                .selectAll("marker")
+                .data(["suit"])
+                .enter()
+                .append("marker")
+                .attr("id", function(d) { return d; })
+                .attr("markerUnits", "strokeWidth")
+                .attr("markerWidth", 12)
+                .attr("markerHeight", 12)
+                .attr("viewBox", "0 0 12 12")
+                .attr("refX", 6)
+                .attr("refY", 6)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M2,2 L10,6 L2,10 L6,6 L2,2")
+                .attr("fill", "#000");
+        svg.append("path")
+                .attr("d", "M0,100 L250,150 L500,500")
+                .attr("fill", "white")
+                .attr("stroke", "red")
+                .attr("stroke-width", 2)
+                .attr("marker-mid", "url(#suit)");
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <script src="d3.js"></script>
+    <script>
+        var nodes=[
+            {name:"NODE_A"},
+            {name:"NODE_B"},
+            {name:"NODE_C"}
+        ];
+        var edges=[
+            {source:0, target:1},
+            {source:1, target:2},
+            {source:0, target:2}
+        ];
+        var force=d3.layout.force()
+                .nodes(nodes)
+                .links(edges)
+                .size([960, 600])
+                .linkDistance(100)
+                .charge(-400)
+                .start();
+        var svg=d3.select("body")
+                .append("svg")
+                .attr("width", 960)
+                .attr("height", 600);
+        var links=svg.selectAll("path")
+                .data(edges)
+                .enter()
+                .append("path")
+                .style("fill", "white")
+                .style("stroke", "#ccc")
+                .style("stroke-width", 2)
+                .attr("marker-mid", function(d) { return "url(#" + d.type + ")"; });
+        var markers=svg.append("defs")
+                .selectAll("marker")
+                .data(["suit"])
+                .enter()
+                .append("marker")
+                .attr("id", function(d) { return d; })
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 15)
+                .attr("refY", -1.5)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M0,-5L10,0L0,5");
+        var color = d3.scale.category20();
+        var elems=svg.selectAll("circle")
+                .data(nodes)
+                .enter()
+                .append("circle")
+                .attr("r", 20)
+                .style("fill", function(d, i) {
+                    return color(i);
+                })
+                .call(force.drag);
+        var text=svg.selectAll("text")
+                .data(nodes)
+                .enter()
+                .append("text")
+                .attr("x", 8)
+                .attr("y", ".31em")
+                .text(function(d) {return d.name;});
+        force.on("tick", function() {
+            links.attr("d", linkArc);
+            elems.attr("cx", function(d) {return d.x;})
+                    .attr("cy", function(d) {return d.y;});
+            text.attr("x", function(d) {return d.x;})
+                    .attr("y", function(d) {return d.y;});
+        });
+        function linkArc(d) {
+            var dx = d.target.x + d.source.x,
+                    dy = d.target.y + d.source.y,
+                    dmx = dx / 2,
+                    dmy=dy / 2;
+            return "M" + d.source.x + "," + d.source.y + " T" + dmx + "," + dmy + " T" + d.target.x + "," + d.target.y;
+        }
+    </script>
+</body>
+</html>
