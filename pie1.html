@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <script src="d3.js"></script>
+    <script>
+        var origin=[
+                ["小米", 60.8],
+                ["三星", 58.4],
+                ["联想", 47.3],
+                ["苹果", 46.6],
+                ["华为", 41.3],
+                ["酷派", 40.1],
+                ["其他", 111.5]
+        ];
+        var pie=d3
+                .layout
+                .pie()
+                .startAngle(Math.PI * 0)
+                .endAngle(Math.PI * 2)
+                .value(function(d) {
+                    return d[1];
+                });
+        var result=pie(origin);
+        var arc=d3
+                .svg
+                .arc()
+                .innerRadius(20)
+                .outerRadius(30);
+        var color=d3
+                .scale
+                .category20();
+        var pointx=200;
+        var pointy=200;
+        var arcs=d3
+                .select("body")
+                .append("svg")
+                .attr("width", 500)
+                .attr("height", 500)
+                .selectAll("g")
+                .data(result)
+                .enter()
+                .append("g")
+                .attr("transform", "translate(" + pointx + ", " + pointy + ")");
+        arcs.append("path")
+                .attr("fill", function(d, i) {
+                    return color(i);
+                })
+                .attr("d", function(d) {
+                    return arc(d);
+                });
+        arcs.append("text")
+                .attr("transform", function(d) {
+                    var x=arc.centroid(d)[0] * 1.8;
+                    var y=arc.centroid(d)[1] * 1.8;
+                    return "translate(" + x + ", " + y + ")";
+                })
+                .attr("text-anchor", "middle")
+                .text(function(d) {
+                    var percent=Number(d.value) / d3.sum(origin, function(d) {return d[1];}) * 100;
+                    return percent.toFixed(1) + "%";
+                });
+        arcs.append("line")
+                .attr("stroke", "black")
+                .attr("x1", function(d) {return arc.centroid(d)[0] * 2;})
+                .attr("y1", function(d) {return arc.centroid(d)[1] * 2;})
+                .attr("x2", function(d) {return arc.centroid(d)[0] * 2.2;})
+                .attr("y2", function(d) {return arc.centroid(d)[1] * 2.2;});
+        arcs.append("text")
+                .attr("transform", function(d) {
+                    var x=arc.centroid(d)[0] * 2.5;
+                    var y=arc.centroid(d)[1] * 2.5;
+                    return "translate(" + x + ", " + y + ")";
+                })
+                .attr("text-anchor", "middle")
+                .text(function(d) {
+                    return d.data[0];
+                });
+    </script>
+</body>
+</html>
